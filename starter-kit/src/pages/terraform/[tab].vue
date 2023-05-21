@@ -1,0 +1,106 @@
+<script setup>
+import { useRoute } from 'vue-router'
+import { ref } from 'vue'
+import TerraformSettingsPortfolio from '@/views/pages/terraform/TerraformSettingsPortfolio.vue'
+import TerraformSettingsParameter from '@/views/pages/terraform/TerraformSettingsParameter.vue'
+import TerraformSettingsPlan from '@/views/pages/terraform/TerraformSettingsPlan.vue'
+import TerraformSettingsApply from '@/views/pages/terraform/TerraformSettingsApply.vue'
+
+const route = useRoute()
+const activeTab = ref(route.params.tab)
+function handleTabClick(tab) {
+  if (tab === 'parameter' && activeTab.value === 'portfolio') {
+    // Check if the current active tab is 'portfolio'
+    activeTab.value = tab // Activate the 'parameter' tab
+  } else if (tab === 'plan' && activeTab.value === 'parameter') {
+    // Check if the current active tab is 'parameter'
+    activeTab.value = tab // Activate the 'plan' tab
+  } else if (tab === 'apply' && activeTab.value === 'plan') {
+    // Check if the current active tab is 'plan'
+    activeTab.value = tab // Activate the 'apply' tab
+  }
+}
+
+function handleNextTab() {
+  if (activeTab.value === 'portfolio') {
+    activeTab.value = 'parameter' // 'portfolio' 탭에서 'parameter' 탭으로 이동
+  } else if (activeTab.value === 'parameter') {
+    activeTab.value = 'plan' // 'parameter' 탭에서 'plan' 탭으로 이동
+  } else if (activeTab.value === 'plan') {
+    activeTab.value = 'apply' // 'plan' 탭에서 'apply' 탭으로 이동
+  }
+}
+
+function shouldDisableTab(tab) {
+  const activeTabIndex = tabs.findIndex((item) => item.tab === activeTab.value);
+  const tabIndex = tabs.findIndex((item) => item.tab === tab);
+
+  return tabIndex > activeTabIndex;
+}
+
+// tabs
+const tabs = [
+  {
+    id: 1,
+    title: '1. Portfolio Select',
+    icon: 'mdi-account-outline',
+    tab: 'portfolio',
+  },
+  {
+    id: 2,
+    title: '2. Parameter Configuration',
+    icon: 'mdi-account-outline',
+    tab: 'parameter',
+  },
+  {
+    id: 3,
+    title: '3. Plan ',
+    icon: 'mdi-lock-open-outline',
+    tab: 'plan',
+  },
+  {
+    id: 4,
+    title: '4. Apply',
+    icon: 'mdi-bell-outline',
+    tab: 'apply',
+  },
+]
+
+
+</script>
+
+<template>
+  <div>
+    <VTabs v-model="activeTab" class="v-tabs-pill">
+      <VTab
+        v-for="item in tabs"
+        :key="item.id"
+        :value="item.tab"
+        :to="{ name: 'terraform-tab', params: { tab: item.tab } }"
+        @click="handleTabClick(item.tab)"
+        :disabled="shouldDisableTab(item.tab)"
+      >
+        <VIcon size="20" start :icon="item.icon" />
+        {{ item.title }}
+      </VTab>
+    </VTabs>
+  </div>
+
+  <VWindow v-model="activeTab" class="mt-4 disable-tab-transition" :touch="false">
+    <VWindowItem value="portfolio">
+      <TerraformSettingsPortfolio @clickNextTab="handleNextTab" />
+    </VWindowItem>
+
+    <VWindowItem value="parameter">
+      <TerraformSettingsParameter @clickNextTab="handleNextTab"/>
+    </VWindowItem>
+
+    <VWindowItem value="plan">
+      <TerraformSettingsPlan />
+    </VWindowItem>
+
+    <VWindowItem value="apply">
+      <TerraformSettingsApply />
+    </VWindowItem>
+  </VWindow>
+</template>
