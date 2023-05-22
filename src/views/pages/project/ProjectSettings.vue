@@ -35,8 +35,6 @@ onMounted(fetchProjects)
           
     </VCol>
     <VCol
-      v-for="project in projects"
-      :key="project.id"
       md="6"
       lg="4"
     >
@@ -56,7 +54,7 @@ onMounted(fetchProjects)
           </VAvatar>
 
           <h6 class="text-h6">
-            {{ project.projectGroup }}
+            Demo Group
           </h6>
         </VCardText>
 

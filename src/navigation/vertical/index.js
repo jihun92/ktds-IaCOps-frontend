@@ -11,7 +11,7 @@ export default [
   },
   {
     title: '프로비저닝',
-    to: { name: 'terraform-tab', params: { tab: 'portfolio' } },
+    to: { name: 'terraform-tab', params: { tab: 'project' } },
     icon: { icon: 'mdi-file-document-outline' },
   },
   {
