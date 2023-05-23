@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import UserProjects from '@/views/pages/project/ProjectSettings.vue'
+import ProjectSettings from '@/views/pages/project/ProjectSettings.vue'
 const route = useRoute()
 const activeTab = ref(route.params.tab)
 
@@ -45,7 +45,7 @@ const tabs = [
 
       <!-- Projects -->
       <VWindowItem value="projects">
-        <UserProjects />
+        <ProjectSettings />
       </VWindowItem>
 
     </VWindow>

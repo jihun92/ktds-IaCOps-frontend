@@ -8,11 +8,6 @@ const props = defineProps({
   data: {
     type: Object,
     required: true,
-    default: () => ({
-      name: 'Web Server -1',
-      image: 'Webserver-centos7-230518',
-      type: 'T2.micro',
-    }),
   },
 })
 

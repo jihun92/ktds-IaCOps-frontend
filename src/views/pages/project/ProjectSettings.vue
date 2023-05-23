@@ -1,10 +1,11 @@
 <script setup>
-import { useProjectListStore } from './useProjectListStore'
-import { ref, onMounted } from 'vue';
+//import { useProjectListStore } from './useProjectListStore'
+//import { ref, onMounted } from 'vue';
 
-const projectListStore = useProjectListStore()
-const projects = ref([])
+//const projectListStore = useProjectListStore()
+//const projects = ref([])
 
+/*
 const fetchProjects = () => {
   projectListStore.fetchProjects().then(response => {
     projects.value = response.data.projects
@@ -14,6 +15,7 @@ const fetchProjects = () => {
 }
 
 onMounted(fetchProjects)
+*/
 </script>
 <template>
   <VRow>

@@ -2,7 +2,7 @@
   <VForm @submit.prevent="() => { }">
 
     <VCol cols="12">
-      <VCard title="APPLY 결과">
+      <VCard title="RUN 결과">
         <VCardText>
           <VTextarea label="Default" />
         </VCardText>

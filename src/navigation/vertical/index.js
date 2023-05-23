@@ -1,7 +1,7 @@
 export default [
   {
     title: '메인',
-    to: { name: 'dashboard' },
+    to: { name: 'index' },
     icon: { icon: 'mdi-home-outline' },
   },
   {
@@ -16,7 +16,7 @@ export default [
   },
   {
     title: '변경관리',
-    to: { name: 'ansible' },
+    to: { name: 'ansible-tab', params: { tab: 'parameter' } },
     icon: { icon: 'mdi-file-document-outline' },
   },
 ]

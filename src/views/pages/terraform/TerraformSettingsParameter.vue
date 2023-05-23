@@ -34,7 +34,7 @@ const removeProduct = id => {
     <!-- 👉 web 선택 -->
     <VCol cols="12">
       <VCard title="WEB 서버">
-        <!-- 👉 Add purchased products -->
+        <!-- 👉 Add  -->
         <VCardText class="add-products-form">
           <div v-for="(product, index) in props.data.settingConfig" class="mb-4">
             <ParameterWebEdit :id="index" :data="product" @remove-product="removeProduct" />
@@ -50,21 +50,27 @@ const removeProduct = id => {
     <!-- 👉 was 선택 -->
     <VCol cols="12">
       <VCard title="WAS 서버">
-        <!-- 👉 Add purchased products -->
+        <!-- 👉 Add  -->
         <VCardText class="add-products-form">
+          <div v-for="(product, index) in props.data.settingConfig" class="mb-4">
+            <ParameterWebEdit :id="index" :data="product" @remove-product="removeProduct" />
+          </div>
 
           <VBtn size="small" prepend-icon="mdi-plus" @click="addItem">
             Add
           </VBtn>
         </VCardText>
       </VCard>
-
     </VCol>
+
     <!-- 👉 db 선택 -->
     <VCol cols="12">
       <VCard title="DB 서버">
-        <!-- 👉 Add purchased products -->
+        <!-- 👉 Add  -->
         <VCardText class="add-products-form">
+          <div v-for="(product, index) in props.data.settingConfig" class="mb-4">
+            <ParameterWebEdit :id="index" :data="product" @remove-product="removeProduct" />
+          </div>
 
           <VBtn size="small" prepend-icon="mdi-plus" @click="addItem">
             Add
