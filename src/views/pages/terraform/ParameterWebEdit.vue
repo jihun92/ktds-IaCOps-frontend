@@ -12,14 +12,13 @@ const props = defineProps({
 })
 
 const emit = defineEmits([
-  'removeProduct',
+    'removeProduct',
 ])
 
 
 const removeProduct = () => {
-  emit('removeProduct', props.id)
+    emit('removeProduct', props.id)
 }
-
 </script>
 
 <template>

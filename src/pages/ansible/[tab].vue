@@ -4,6 +4,8 @@ import AnsibleSettingsParameter from '@/views/pages/ansible/AnsibleSettingsParam
 import AnsibleSettingsDry from '@/views/pages/ansible/AnsibleSettingsDry.vue'
 import AnsibleSettingsRun from '@/views/pages/ansible/AnsibleSettingsRun.vue'
 const route = useRoute()
+const router = useRouter()
+
 const activeTab = ref(route.params.tab)
 
 // tabs
@@ -39,18 +41,26 @@ const invoiceData = ref({
 })
 
 function handleNextTab() {
+  let nextTab = '';
+
   if (activeTab.value === 'parameter') {
-    activeTab.value = 'dry' 
+    nextTab = 'dry';
   } else if (activeTab.value === 'dry') {
-    activeTab.value = 'run' 
-  }
+    nextTab = 'run';
+  } 
+  activeTab.value = nextTab;
+
+  // Change the  URLbased on the selected tab
+  router.push({ name: 'ansible-tab', params: { tab: nextTab } });
 }
+
 function shouldDisableTab(tab) {
   const activeTabIndex = tabs.findIndex((item) => item.tab === activeTab.value);
   const tabIndex = tabs.findIndex((item) => item.tab === tab);
 
   return tabIndex > activeTabIndex;
 }
+
 </script>
 
 <template>
@@ -59,7 +69,6 @@ function shouldDisableTab(tab) {
 
     <VTabs v-model="activeTab" class="v-tabs-pill">
       <VTab v-for="item in tabs" :key="item.icon" :value="item.tab"
-        :to="{ name: 'ansible-tab', params: { tab: item.tab } }"
         :disabled="shouldDisableTab(item.tab)">
         <VIcon size="20" start :icon="item.icon" />
         {{ item.title }}

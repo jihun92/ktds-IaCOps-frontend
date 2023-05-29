@@ -1,10 +1,18 @@
+<script setup>
+const props = defineProps({
+  data: {
+    type: String,
+    required: true,
+  },
+});
+</script>
 <template>
   <VForm @submit.prevent="() => { }">
 
     <VCol cols="12">
       <VCard title="APPLY 결과">
         <VCardText>
-          <VTextarea label="Default" />
+          <p> apply결과 : {{ data }}</p>
         </VCardText>
       </VCard>
     </VCol>

@@ -6,11 +6,15 @@ import TerraformSettingsParameter from '@/views/pages/terraform/TerraformSetting
 import TerraformSettingsPlan from '@/views/pages/terraform/TerraformSettingsPlan.vue'
 import TerraformSettingsApply from '@/views/pages/terraform/TerraformSettingsApply.vue'
 const route = useRoute()
+const router = useRouter()
 const activeTab = ref(route.params.tab)
+const planResults = ref(null); // plan-results 변수 선언
+const applyResults = ref(null); // apply-results 변수 선언
+
 
 // tabs
 const tabs = [
-{
+  {
     id: 1,
     title: '1. Project Select',
     icon: 'mdi-account-outline',
@@ -30,7 +34,7 @@ const tabs = [
   },
   {
     id: 4,
-    title: '4. Plan ',
+    title: '4. Plan',
     icon: 'mdi-lock-open-outline',
     tab: 'plan',
   },
@@ -42,29 +46,66 @@ const tabs = [
   },
 ]
 const invoiceData = ref({
-  settingConfig: [{
-    name: 'sample',
-    image: 'sample',
-    type: 'sample',
-  }],
+  settingWeb: [
+    {
+      name: 'Web Server -1',
+      image: 'WEBserver-centos7-230518',
+      type: 'T2.micro',
+    },
+  ],
+  settingWas: [
+    {
+      name: 'Was Server -1',
+      image: 'WASserver-centos7-230518',
+      type: 'T2.micro',
+    },
+  ],
+  settingDB: [
+    {
+      name: 'DB Server -1',
+      image: 'DBserver-centos7-230518',
+      type: 'T2.micro',
+    },
+  ],
 })
+
 function handleNextTab() {
+  let nextTab = '';
+
   if (activeTab.value === 'project') {
-    activeTab.value = 'portfolio' // 'project' 탭에서 'portfolio' 탭으로 이동
-  }
-  else if (activeTab.value === 'portfolio') {
-    activeTab.value = 'parameter' // 'portfolio' 탭에서 'parameter' 탭으로 이동
+    nextTab = 'portfolio';
+  } else if (activeTab.value === 'portfolio') {
+    nextTab = 'parameter';
   } else if (activeTab.value === 'parameter') {
-    activeTab.value = 'plan' // 'parameter' 탭에서 'plan' 탭으로 이동
+    nextTab = 'plan';
   } else if (activeTab.value === 'plan') {
-    activeTab.value = 'apply' // 'plan' 탭에서 'apply' 탭으로 이동
+    nextTab = 'apply';
   }
+
+  activeTab.value = nextTab;
+
+  // Change the  URLbased on the selected tab
+  router.push({ name: 'terraform-tab', params: { tab: nextTab } });
 }
+
 function shouldDisableTab(tab) {
   const activeTabIndex = tabs.findIndex((item) => item.tab === activeTab.value);
   const tabIndex = tabs.findIndex((item) => item.tab === tab);
 
   return tabIndex > activeTabIndex;
+}
+
+function handlePlanResults(results) {
+  planResults.value = results;
+}
+
+function handleApplyResults(results) {
+  applyResults.value = results;
+}
+
+function goBack(){
+  activeTab.value = 'parameter';
+  router.go(-1);
 }
 </script>
 
@@ -73,34 +114,42 @@ function shouldDisableTab(tab) {
     <UserProfileHeader class="mb-6" />
 
     <VTabs v-model="activeTab" class="v-tabs-pill">
-      <VTab v-for="item in tabs" :key="item.icon" :value="item.tab"
-        :to="{ name: 'terraform-tab', params: { tab: item.tab } }" 
-        :disabled="shouldDisableTab(item.tab)">
+      <VTab
+        v-for="item in tabs"
+        :key="item.icon"
+        :value="item.tab"
+        
+        :disabled="shouldDisableTab(item.tab)"
+      >
         <VIcon size="20" start :icon="item.icon" />
-        {{ item.title }}
+        {{ item.title }} 
       </VTab>
     </VTabs>
 
     <VWindow v-model="activeTab" class="mt-4 disable-tab-transition" :touch="false">
-    <VWindowItem value="project">
-      <TerraformSettingsProject @clickNextTab="handleNextTab" />
-    </VWindowItem>
-    <VWindowItem value="portfolio">
-      <TerraformSettingsPortfolio @clickNextTab="handleNextTab"/>
-    </VWindowItem>
+      <VWindowItem value="project">
+        <TerraformSettingsProject @clickNextTab="handleNextTab" />
+      </VWindowItem>
+      <VWindowItem value="portfolio">
+        <TerraformSettingsPortfolio @clickNextTab="handleNextTab" />
+      </VWindowItem>
 
-    <VWindowItem value="parameter">
-      <TerraformSettingsParameter  @clickNextTab="handleNextTab" :data="invoiceData"/>
-    </VWindowItem>
+      <VWindowItem value="parameter">
+        <TerraformSettingsParameter
+          @clickNextTab="handleNextTab"
+          @plan-results="handlePlanResults"
+          :data="invoiceData"
+        />
+      </VWindowItem>
 
-    <VWindowItem value="plan">
-      <TerraformSettingsPlan @clickNextTab="handleNextTab"  />
-    </VWindowItem> 
+      <VWindowItem value="plan">
+        <TerraformSettingsPlan @clickNextTab="handleNextTab" @apply-results="handleApplyResults" @goBack="goBack" :data="planResults" />
+      </VWindowItem>
 
-    <VWindowItem value="apply">
-      <TerraformSettingsApply />
-    </VWindowItem>
-  </VWindow>
+      <VWindowItem value="apply">
+        <TerraformSettingsApply :data="applyResults" />
+      </VWindowItem>
+    </VWindow>
   </div>
 </template>
 
