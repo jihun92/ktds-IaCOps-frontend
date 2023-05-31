@@ -1,5 +1,7 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <script setup>
+const typeOptions = ['t2.micro', 't2.big', '??']
+
 const props = defineProps({
   id: {
     type: Number,
@@ -46,7 +48,7 @@ const removeProduct = () => {
                     <VTextField v-model="props.data.image" type="text" label="Image" />
                 </VCol>
                 <VCol>
-                    <VTextField v-model="props.data.type" type="text" label="Type" />
+                    <VSelect label="type" :items="typeOptions" v-model="props.data.type" />
                 </VCol>
             </VRow>
         </div>

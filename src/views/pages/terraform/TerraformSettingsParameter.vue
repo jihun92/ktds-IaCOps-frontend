@@ -1,11 +1,12 @@
 <script setup>
+import { reactive } from 'vue';
 import { useTerraformStore } from './useTerraformStore'
 import ParameterWebEdit from './ParameterWebEdit.vue';
 import ParameterWasEdit from './ParameterWasEdit.vue';
 import ParameterDBEdit from './ParameterDBEdit.vue';
 const results = ref([])
 const instance = getCurrentInstance();
-
+const isLoading = ref(false);
 
 const props = defineProps({
   data: {
@@ -28,9 +29,15 @@ const postPlan = async () => {
 
 const submitPlan = async () => {
   try {
-    await postPlan(); // postPlan 함수 호출
+    // 로딩 화면 표시
+    isLoading.value = true;
+    await postPlan() // postPlan 함수 호출
+
     instance.emit('clickNextTab'); // 다음 탭으로 이동하는 이벤트 발생
     instance.emit('plan-results', results.value); // plan-results 값을 전달
+
+    // 로딩 화면 숨김
+    isLoading.value = false;
   } catch (error) {
     console.error(error);
   }
@@ -82,6 +89,7 @@ const removeDBProduct = id => {
 
   props.data.settingDB.splice(id, 1)
 }
+
 
 </script>
 
@@ -141,9 +149,32 @@ const removeDBProduct = id => {
       <VBtn @click="submitPlan" type="submit">
         Plan
       </VBtn>
-      <VBtn type="reset" color="secondary" variant="tonal">
+      <VBtn  type="reset" color="error" variant="tonal">
         Reset
       </VBtn>
     </VCol>
   </VForm>
+
+  <div class="spinner-wrap" v-if="isLoading">
+    <VProgressCircular class="spinner" :size="70" :width="7" color="primary" indeterminate />
+  </div>
+
 </template>
+
+<style lang="scss">
+.spinner-wrap {
+  display: block;
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(3px);
+
+  .spinner {
+    top: 50%;
+    left: 50%;
+  }
+}
+
+</style>

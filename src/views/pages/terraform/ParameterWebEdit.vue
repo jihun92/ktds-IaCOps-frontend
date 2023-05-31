@@ -1,14 +1,15 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <script setup>
+const typeOptions = ['t2.micro', 't2.big', 'sample']
 const props = defineProps({
-  id: {
-    type: Number,
-    required: true,
-  },
-  data: {
-    type: Object,
-    required: true,
-  },
+    id: {
+        type: Number,
+        required: true,
+    },
+    data: {
+        type: Object,
+        required: true,
+    },
 })
 
 const emit = defineEmits([
@@ -38,14 +39,16 @@ const removeProduct = () => {
         <div class="pa-5 flex-grow-1">
             <VRow>
                 <VCol cols="12" md="6" sm="4">
-                    <VTextField v-model="props.data.name" type="text" label="Name" />
+                    <VTextField v-model="props.data.name" type="text" placeholder="Web Server -1" label="Name"
+                        @focus="clearNameValue" />
 
                 </VCol>
                 <VCol>
-                    <VTextField v-model="props.data.image" type="text" label="Image" />
+                    <VTextField v-model="props.data.image" type="text" placeholder="Webserver-centos7-230518" label="Image"
+                        @focus="clearImageValue" />
                 </VCol>
                 <VCol>
-                    <VTextField v-model="props.data.type" type="text" label="Type" />
+                    <VSelect label="type" :items="typeOptions" v-model="props.data.type" />
                 </VCol>
             </VRow>
         </div>
@@ -58,3 +61,23 @@ const removeProduct = () => {
         </div>
     </VCard>
 </template>
+
+<script>
+export default {
+    methods: {
+        clearNameValue() {
+            this.props.data.name = '';
+        },
+        clearImageValue() {
+            this.props.data.image = '';
+        },
+        updateNameValue() {
+            if (!this.props.data.name) {
+                this.props.data.name = this.props.data.name;
+            } else {
+                this.props.data.name = '';
+            }
+        },
+    },
+}
+</script>

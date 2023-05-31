@@ -2,7 +2,8 @@
 import { useTerraformStore } from './useTerraformStore'
 const results = ref([])
 const instance = getCurrentInstance();
-const router = useRouter()
+const isLoading = ref(false);
+
 
 
 const props = defineProps({
@@ -17,7 +18,7 @@ const TerraformStore = useTerraformStore()
 const postApply = async () => {
   try {
     const response = await TerraformStore.postApply({});
-    results.value = response;
+    results.value = response.data;
     // 결과값을 이벤트를 통해 전달
   } catch (error) {
     console.error(error);
@@ -26,9 +27,11 @@ const postApply = async () => {
 
 const submitApply = async () => {
   try {
+    isLoading.value = true;
     await postApply(); // postApply 함수 호출
     instance.emit('clickNextTab'); // 다음 탭으로 이동하는 이벤트 발생
     instance.emit('apply-results', results.value); // apply-results 값을 전달
+    isLoading.value = false;
   } catch (error) {
     console.error(error);
   }
@@ -41,13 +44,14 @@ const goBack = () => {
 </script>
 
 <template>
-  <VForm @submit.prevent="() => {}" method="post">
+  <VForm @submit.prevent="() => { }" method="post">
 
     <VCol cols="12">
       <VCard title="PLAN 결과">
-        <VCardText>
-          <p> plan 결과 : {{ data }}</p>
-          <!--<VTextarea v-model="props.data['apply-results']" rows="5"></VTextarea>-->
+        <VCardText class="scrollable-p">
+          <p v-for="d in data">
+            <span>{{ d }}</span>
+          </p>
         </VCardText>
       </VCard>
     </VCol>
@@ -61,4 +65,29 @@ const goBack = () => {
       </VBtn>
     </VCol>
   </VForm>
+  <div class="spinner-wrap" v-if="isLoading">
+    <VProgressCircular class="spinner" :size="70" :width="7" color="primary" indeterminate />
+  </div>
 </template>
+<style lang="scss">
+.spinner-wrap {
+  display: block;
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(3px);
+
+  .spinner {
+    top: 50%;
+    left: 50%;
+  }
+
+}
+
+.scrollable-p {
+  max-height: 500px;
+  overflow: auto;
+}
+</style>

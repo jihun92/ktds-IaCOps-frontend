@@ -80,6 +80,8 @@ function handleNextTab() {
     nextTab = 'plan';
   } else if (activeTab.value === 'plan') {
     nextTab = 'apply';
+  } else if (activeTab.value === 'apply') {
+    nextTab = 'project';
   }
 
   activeTab.value = nextTab;
@@ -118,7 +120,7 @@ function goBack(){
         v-for="item in tabs"
         :key="item.icon"
         :value="item.tab"
-        
+        :to="{ name: 'terraform-tab', params: { tab: item.tab } }"
         :disabled="shouldDisableTab(item.tab)"
       >
         <VIcon size="20" start :icon="item.icon" />
@@ -147,7 +149,7 @@ function goBack(){
       </VWindowItem>
 
       <VWindowItem value="apply">
-        <TerraformSettingsApply :data="applyResults" />
+        <TerraformSettingsApply @clickNextTab="handleNextTab" :data="applyResults" />
       </VWindowItem>
     </VWindow>
   </div>
