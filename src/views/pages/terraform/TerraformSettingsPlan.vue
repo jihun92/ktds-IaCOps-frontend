@@ -1,42 +1,23 @@
 <script setup>
 import { useTerraformStore } from './useTerraformStore'
-const results = ref([])
 const instance = getCurrentInstance();
 const isLoading = ref(false);
-
-
-
-const props = defineProps({
-  data: {
-    type: String,
-    required: true,
-  },
-});
-
 const TerraformStore = useTerraformStore()
+const { planResults, applyResults } = storeToRefs(TerraformStore)
 
-const postApply = async () => {
-  try {
-    const response = await TerraformStore.postApply({});
-    results.value = response.data;
-    // 결과값을 이벤트를 통해 전달
-  } catch (error) {
-    console.error(error);
-  }
+
+
+const submitApply =  () => {
+  isLoading.value = true;
+  TerraformStore.postApply()
+    .then((response) => {
+      applyResults.value = response.data
+      instance.emit('clickNextTab'); // 다음 탭으로 이동하는 이벤트 발생
+      isLoading.value = false;
+    }).catch(error => {
+    console.error(error)
+  })
 }
-
-const submitApply = async () => {
-  try {
-    isLoading.value = true;
-    await postApply(); // postApply 함수 호출
-    instance.emit('clickNextTab'); // 다음 탭으로 이동하는 이벤트 발생
-    instance.emit('apply-results', results.value); // apply-results 값을 전달
-    isLoading.value = false;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 const goBack = () => {
   instance.emit('goBack');
 }
@@ -45,11 +26,18 @@ const goBack = () => {
 
 <template>
   <VForm @submit.prevent="() => { }" method="post">
+    <VCol cols="12">
+      <VCard title="PLAN 그래프">
+        <VCardText>
+          <img src="/src/assets/images/graph.svg" alt="SVG 이미지" style="max-width: 100%; max-height: 100%;">
+        </VCardText>
+      </VCard>
+    </VCol>
 
     <VCol cols="12">
       <VCard title="PLAN 결과">
         <VCardText class="scrollable-p">
-          <p v-for="d in data">
+          <p v-for="d in planResults">
             <span>{{ d }}</span>
           </p>
         </VCardText>

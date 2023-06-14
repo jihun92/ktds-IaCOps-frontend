@@ -16,7 +16,18 @@ export default [
   },
   {
     title: '변경관리',
-    to: { name: 'ansible-tab', params: { tab: 'parameter' } },
+    icon: { icon: 'mdi-file-document-outline' },
+    children: [
+      { title: 'Ansible', to: { name: 'infrachange-ansible-tab', params: { tab: 'project' } } },
+      { title: 'Terraform', to: { name: 'infrachange-terraform-tab' , params: { tab: 'project' }} },
+
+    ],
+  },
+  
+  {
+    title: '작업',
+    to: { name: 'action-tab', params: { tab: 'project' } },
     icon: { icon: 'mdi-file-document-outline' },
   },
 ]
+

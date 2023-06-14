@@ -7,14 +7,12 @@ import TerraformSettingsPlan from '@/views/pages/terraform/TerraformSettingsPlan
 import TerraformSettingsApply from '@/views/pages/terraform/TerraformSettingsApply.vue'
 const route = useRoute()
 const router = useRouter()
-const activeTab = ref(route.params.tab)
-const planResults = ref(null); // plan-results 변수 선언
-const applyResults = ref(null); // apply-results 변수 선언
 
+const activeTab = ref(route.params.tab)
 
 // tabs
 const tabs = [
-  {
+{
     id: 1,
     title: '1. Project Select',
     icon: 'mdi-account-outline',
@@ -34,7 +32,7 @@ const tabs = [
   },
   {
     id: 4,
-    title: '4. Plan',
+    title: '4. Plan ',
     icon: 'mdi-lock-open-outline',
     tab: 'plan',
   },
@@ -45,45 +43,55 @@ const tabs = [
     tab: 'apply',
   },
 ]
-const invoiceData = ref({
+const parameterData = ref({
   settingWeb: [
-    {
-      name: 'Web Server -1',
-      image: 'WEBserver-centos7-230518',
-      type: 'T2.micro',
-    },
+  {
+    name: '',
+    os: '',
+    version: '',
+    type: '',
+    zone: '',
+  }
   ],
   settingWas: [
-    {
-      name: 'Was Server -1',
-      image: 'WASserver-centos7-230518',
-      type: 'T2.micro',
-    },
+  {
+    name: '',
+    os: '',
+    version: '',
+    type: '',
+    zone: '',
+  }
   ],
   settingDB: [
-    {
-      name: 'DB Server -1',
-      image: 'DBserver-centos7-230518',
-      type: 'T2.micro',
-    },
+  {
+    name: '',
+    os: '',
+    version: '',
+    type: '',
+    zone: '',
+    engine: '',
+    dbversion: '',
+  }
   ],
 })
 
 function handleNextTab() {
   let nextTab = '';
-
   if (activeTab.value === 'project') {
     nextTab = 'portfolio';
-  } else if (activeTab.value === 'portfolio') {
+  } 
+  else if (activeTab.value === 'portfolio') {
     nextTab = 'parameter';
-  } else if (activeTab.value === 'parameter') {
+  }
+  else if (activeTab.value === 'parameter') {
     nextTab = 'plan';
-  } else if (activeTab.value === 'plan') {
+  } 
+  else if (activeTab.value === 'plan') {
     nextTab = 'apply';
-  } else if (activeTab.value === 'apply') {
+  } 
+  else if (activeTab.value === 'apply') {
     nextTab = 'project';
   }
-
   activeTab.value = nextTab;
 
   // Change the  URLbased on the selected tab
@@ -96,19 +104,11 @@ function shouldDisableTab(tab) {
 
   return tabIndex > activeTabIndex;
 }
-
-function handlePlanResults(results) {
-  planResults.value = results;
-}
-
-function handleApplyResults(results) {
-  applyResults.value = results;
-}
-
-function goBack(){
+function goBack() {
   activeTab.value = 'parameter';
   router.go(-1);
 }
+
 </script>
 
 <template>
@@ -116,41 +116,37 @@ function goBack(){
     <UserProfileHeader class="mb-6" />
 
     <VTabs v-model="activeTab" class="v-tabs-pill">
-      <VTab
-        v-for="item in tabs"
-        :key="item.icon"
-        :value="item.tab"
-        :to="{ name: 'terraform-tab', params: { tab: item.tab } }"
-        :disabled="shouldDisableTab(item.tab)"
-      >
+      <VTab v-for="item in tabs" :key="item.icon" :value="item.tab"
+        :to="{ name: 'terraform-tab', params: { tab: item.tab } }" :disabled="shouldDisableTab(item.tab)">
         <VIcon size="20" start :icon="item.icon" />
-        {{ item.title }} 
+        {{ item.title }}
       </VTab>
     </VTabs>
 
+
     <VWindow v-model="activeTab" class="mt-4 disable-tab-transition" :touch="false">
+
       <VWindowItem value="project">
         <TerraformSettingsProject @clickNextTab="handleNextTab" />
       </VWindowItem>
+
       <VWindowItem value="portfolio">
         <TerraformSettingsPortfolio @clickNextTab="handleNextTab" />
       </VWindowItem>
 
       <VWindowItem value="parameter">
-        <TerraformSettingsParameter
-          @clickNextTab="handleNextTab"
-          @plan-results="handlePlanResults"
-          :data="invoiceData"
-        />
+        <TerraformSettingsParameter @clickNextTab="handleNextTab" :data="parameterData" />
       </VWindowItem>
 
       <VWindowItem value="plan">
-        <TerraformSettingsPlan @clickNextTab="handleNextTab" @apply-results="handleApplyResults" @goBack="goBack" :data="planResults" />
+        <TerraformSettingsPlan @clickNextTab="handleNextTab" @goBack="goBack" />
       </VWindowItem>
 
       <VWindowItem value="apply">
-        <TerraformSettingsApply @clickNextTab="handleNextTab" :data="applyResults" />
+        <TerraformSettingsApply @clickNextTab="handleNextTab" />
       </VWindowItem>
+
+
     </VWindow>
   </div>
 </template>
@@ -159,3 +155,4 @@ function goBack(){
 meta:
   navActiveLink: terraform-tab
 </route>
+

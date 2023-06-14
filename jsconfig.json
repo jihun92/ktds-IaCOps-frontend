@@ -3,7 +3,8 @@
     "vite.config.*",
     "src/**/*",
     "src/**/*.vue",
-    "themeConfig.js"
+    "themeConfig.js",
+    "/src/views/pages/infrachange/**/*"
   ],
   "exclude": [
     "dist",

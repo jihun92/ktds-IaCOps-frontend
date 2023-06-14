@@ -1,23 +1,14 @@
 <script setup>
 import { useGitStore } from '@/views/git/useGitStore'
-const addResults = ref('')
-const commitResults = ref('')
-const pushResults = ref('')
+import { useTerraformStore } from './useTerraformStore'
 const isLoading = ref(false);
 const isDialogVisible = ref(false)
 const instance = getCurrentInstance();
 const commitCode = ref(0);
-
-
-const props = defineProps({
-  data: {
-    type: String,
-    required: true,
-  },
-});
-
+const TerraformStore = useTerraformStore()
 const GitStore = useGitStore()
-
+const { applyResults } = storeToRefs(TerraformStore)
+const { addResults, commitResults, pushResults } = storeToRefs(GitStore)
 
 const postAdd = async () => {
   try {
@@ -55,18 +46,20 @@ const submitGit = async () => {
     await new Promise((resolve) => {
       setTimeout(resolve, 5000); // 5초 (5000 밀리초) 대기 후 resolve 호출
     });
-    await postCommit({ commitMsg: 'Commit message test' });
+    await postCommit('Commit message test');
     //console.log(commitResults.value);
     // 3초 대기
     await new Promise((resolve) => {
       setTimeout(resolve, 3000);
     });
-    isLoading.value = false;
-    isDialogVisible.value = true;
     //console.log(isDialogVisible.value);
     //console.log(commitCode.value);
-    //await postPush(); 
-    //console.log(pushResults.value);
+    await postPush(); 
+    await new Promise((resolve) => {
+      setTimeout(resolve, 3000);
+    });
+    isLoading.value = false;
+    isDialogVisible.value = true;
 
   } catch (error) {
     console.error(error);
@@ -82,9 +75,17 @@ const nextTab = () => {
   <VForm @submit.prevent="() => { }">
 
     <VCol cols="12">
+      <VCard title="APPLY 그래프">
+        <VCardText>
+          <img src="/src/assets/images/graph.svg" alt="SVG 이미지" style="max-width: 100%; max-height: 100%;">
+        </VCardText>
+      </VCard>
+    </VCol>
+
+    <VCol cols="12">
       <VCard title="APPLY 결과">
         <VCardText class="scrollable-p">
-          <p v-for="d in data">
+          <p v-for="d in applyResults">
             <span>{{ d }}</span>
           </p>
         </VCardText>
@@ -93,7 +94,7 @@ const nextTab = () => {
 
     <VCol cols="12" class="d-flex flex-wrap gap-4">
       <VBtn @click="submitGit" type="submit">
-        Git Push
+        결과 저장
       </VBtn>
     </VCol>
     <VDialog v-model="isDialogVisible" width="500">
@@ -104,7 +105,7 @@ const nextTab = () => {
       <!-- Dialog Content -->
       <VCard title="Success Message">
         <VCardText>
-          Git push가 정상적으로 완료되었습니다.
+          결과 저장이 정상적으로 완료되었습니다.
         </VCardText>
 
         <VCardActions>

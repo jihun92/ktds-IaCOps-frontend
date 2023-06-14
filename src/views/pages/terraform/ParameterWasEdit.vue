@@ -1,17 +1,33 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <script setup>
-const typeOptions = ['t2.micro', 't2.big', '??']
+import { useTerraformStore } from './useTerraformStore'
+const TerraformStore = useTerraformStore()
 
+const { typeOptions, zoneOptions, osOptions,osVersionList } = storeToRefs(TerraformStore)
 const props = defineProps({
-  id: {
-    type: Number,
-    required: true,
-  },
-  data: {
-    type: Object,
-    required: true,
-  },
+    id: {
+        type: Number,
+        required: true,
+    },
+    data: {
+        type: Object,
+        required: true,
+    },
 })
+const updateList = () => {
+    switch (props.data.os) {
+        case 'centOS':
+            osVersionList.value = ['7.9']
+            break
+        case 'ubuntu':
+            osVersionList.value = ['20.04']
+            break
+        default:
+            osVersionList.value = [];
+            break;
+
+    }
+}
 
 const emit = defineEmits([
     'removeProduct',
@@ -21,6 +37,10 @@ const emit = defineEmits([
 const removeProduct = () => {
     emit('removeProduct', props.id)
 }
+
+watch(() => props.data.os, updateList);
+
+updateList()
 
 </script>
 
@@ -41,14 +61,21 @@ const removeProduct = () => {
         <div class="pa-5 flex-grow-1">
             <VRow>
                 <VCol cols="12" md="6" sm="4">
-                    <VTextField v-model="props.data.name" type="text" label="Name" />
+                    <VTextField v-model="props.data.name" type="text" label="Name" @focus="clearNameValue" />
 
                 </VCol>
                 <VCol>
-                    <VTextField v-model="props.data.image" type="text" label="Image" />
+                    <VSelect label="OS" :items="osOptions" v-model="props.data.os" @change="updateList" />
+
                 </VCol>
                 <VCol>
-                    <VSelect label="type" :items="typeOptions" v-model="props.data.type" />
+                    <VSelect label="Version" :items="osVersionList" v-model="props.data.version" />
+                </VCol>
+                <VCol>
+                    <VSelect label="Type" :items="typeOptions" v-model="props.data.type" />
+                </VCol>
+                <VCol>
+                    <VSelect label="Availability zone " :items="zoneOptions" v-model="props.data.zone" />
                 </VCol>
             </VRow>
         </div>

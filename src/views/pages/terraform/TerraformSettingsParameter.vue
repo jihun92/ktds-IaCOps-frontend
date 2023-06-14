@@ -1,10 +1,9 @@
 <script setup>
-import { reactive } from 'vue';
 import { useTerraformStore } from './useTerraformStore'
 import ParameterWebEdit from './ParameterWebEdit.vue';
 import ParameterWasEdit from './ParameterWasEdit.vue';
 import ParameterDBEdit from './ParameterDBEdit.vue';
-const results = ref([])
+//const results = ref([])
 const instance = getCurrentInstance();
 const isLoading = ref(false);
 
@@ -16,41 +15,32 @@ const props = defineProps({
 })
 
 const TerraformStore = useTerraformStore()
+const { planResults } = storeToRefs(TerraformStore)
 
-const postPlan = async () => {
-  try {
-    const response = await TerraformStore.postPlan({});
-    results.value = response.data;
-    // 결과값을 이벤트를 통해 전달
-  } catch (error) {
-    console.error(error);
-  }
+
+const submitPlan =  () => {
+  isLoading.value = true;
+  TerraformStore.postPlan()
+    .then((response) => {
+      planResults.value = response.data
+      instance.emit('clickNextTab'); // 다음 탭으로 이동하는 이벤트 발생
+      isLoading.value = false;
+    }).catch(error => {
+    console.error(error)
+  })
 }
 
-const submitPlan = async () => {
-  try {
-    // 로딩 화면 표시
-    isLoading.value = true;
-    await postPlan() // postPlan 함수 호출
-
-    instance.emit('clickNextTab'); // 다음 탭으로 이동하는 이벤트 발생
-    instance.emit('plan-results', results.value); // plan-results 값을 전달
-
-    // 로딩 화면 숨김
-    isLoading.value = false;
-  } catch (error) {
-    console.error(error);
-  }
-}
 
 // 👉 Add webitem function
 const addWebItem = () => {
 
   // eslint-disable-next-line vue/no-mutating-props
   props.data.settingWeb.push({
-    name: 'Web Server -1',
-    image: 'Webserver-centos7-230518',
-    type: 'T2.micro',
+    name: '',
+    os: '',
+    version: '',
+    type: '',
+    zone: '',
   })
 }
 
@@ -59,9 +49,11 @@ const addWasItem = () => {
 
   // eslint-disable-next-line vue/no-mutating-props
   props.data.settingWas.push({
-    name: 'Was Server -1',
-    image: 'Wasserver-centos7-230519',
-    type: 'T2.micro',
+    name: '',
+    os: '',
+    version: '',
+    type: '',
+    zone: '',
   })
 }
 
@@ -70,9 +62,13 @@ const addDBItem = () => {
 
   // eslint-disable-next-line vue/no-mutating-props
   props.data.settingDB.push({
-    name: 'DB Server -1',
-    image: 'DBserver-centos7-230520',
-    type: 'T2.micro',
+    name: '',
+    os: '',
+    version: '',
+    type: '',
+    zone: '',
+    engine: '',
+    dbversion: '',
   })
 }
 
@@ -149,7 +145,7 @@ const removeDBProduct = id => {
       <VBtn @click="submitPlan" type="submit">
         Plan
       </VBtn>
-      <VBtn  type="reset" color="error" variant="tonal">
+      <VBtn type="reset" color="error" variant="tonal">
         Reset
       </VBtn>
     </VCol>
@@ -158,7 +154,6 @@ const removeDBProduct = id => {
   <div class="spinner-wrap" v-if="isLoading">
     <VProgressCircular class="spinner" :size="70" :width="7" color="primary" indeterminate />
   </div>
-
 </template>
 
 <style lang="scss">
@@ -176,5 +171,4 @@ const removeDBProduct = id => {
     left: 50%;
   }
 }
-
 </style>
