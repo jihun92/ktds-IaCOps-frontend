@@ -157,7 +157,7 @@ const configApply = () => {
     swData[selectedSwMain][selectedSwSub] = {
       version: selectedVersion,
       state: selectedState,
-      install: selectedInstall === 'true' ? true : false
+      install: selectedInstall === 'true' || selectedInstall === true ? true : false
     };
   });
 
