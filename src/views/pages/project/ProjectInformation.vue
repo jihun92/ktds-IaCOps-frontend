@@ -72,7 +72,7 @@ watch(selectedInventory, (newVal, oldVal) => {
     <VCol cols="12">
         <VCard title="프로비저닝  그래프">
             <VCardText>
-                <img src="/src/assets/images/graph.svg" alt="SVG 이미지" style="max-width: 100%; max-height: 100%;">
+                <img src="/src/assets/images/diagrams.png" alt="SVG 이미지" style="max-width: 100%; max-height: 100%;">
             </VCardText>
         </VCard>
     </VCol>

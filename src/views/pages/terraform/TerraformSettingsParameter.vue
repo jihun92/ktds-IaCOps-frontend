@@ -3,6 +3,7 @@ import { useTerraformStore } from './useTerraformStore'
 import ParameterWebEdit from './ParameterWebEdit.vue';
 import ParameterWasEdit from './ParameterWasEdit.vue';
 import ParameterDBEdit from './ParameterDBEdit.vue';
+import TerraformDiagram from "@/views/pages/terraform/TerraformDiagram.vue";
 //const results = ref([])
 const instance = getCurrentInstance();
 const isLoading = ref(false);
@@ -86,14 +87,36 @@ const removeDBProduct = id => {
   props.data.settingDB.splice(id, 1)
 }
 
+</script>
+
+<script>
+export default {
+  methods:{
+    propertyChange(id){
+      console.log(id);
+      this.$refs.webProperty.$el.style.display = "none";
+      this.$refs.wasProperty.$el.style.display = "none";
+      this.$refs.dbProperty.$el.style.display = "none";
+      if(id.indexOf("WebServer")>-1 || id.indexOf("ec2")>-1){
+        this.$refs.webProperty.$el.style.display = "block";
+      }else if(id.indexOf("WasServer")>-1){
+        this.$refs.wasProperty.$el.style.display = "block";
+      }else if(id.indexOf("DbServer")>-1 || id.indexOf("rds")>-1 ){
+        this.$refs.dbProperty.$el.style.display = "block";
+      }
+    }
+  }
+}
 
 </script>
 
 <template>
   <VForm @submit.prevent="" method="post">
 
+    <TerraformDiagram @child="propertyChange"></TerraformDiagram>
+
     <!-- 👉 web 선택 -->
-    <VCol cols="12">
+    <VCol cols="12" v-show="false" ref="webProperty">
       <VCard title="WEB 서버">
         <!-- 👉 Add  -->
         <VCardText class="add-products-form">
@@ -101,15 +124,15 @@ const removeDBProduct = id => {
             <ParameterWebEdit :id="index" :data="product" @remove-product="removeWebProduct" />
           </div>
 
-          <VBtn size="small" prepend-icon="mdi-plus" @click="addWebItem">
+<!--          <VBtn size="small" prepend-icon="mdi-plus" @click="addWebItem">
             Add
-          </VBtn>
+          </VBtn>-->
         </VCardText>
       </VCard>
     </VCol>
 
     <!-- 👉 was 선택 -->
-    <VCol cols="12">
+    <VCol cols="12" v-show="false" ref="wasProperty">
       <VCard title="WAS 서버">
         <!-- 👉 Add  -->
         <VCardText class="add-products-form">
@@ -117,15 +140,15 @@ const removeDBProduct = id => {
             <ParameterWasEdit :id="index" :data="product" @remove-product="removeWasProduct" />
           </div>
 
-          <VBtn size="small" prepend-icon="mdi-plus" @click="addWasItem">
+<!--          <VBtn size="small" prepend-icon="mdi-plus" @click="addWasItem">
             Add
-          </VBtn>
+          </VBtn>-->
         </VCardText>
       </VCard>
     </VCol>
 
     <!-- 👉 db 선택 -->
-    <VCol cols="12">
+    <VCol cols="12" v-show="false" ref="dbProperty">
       <VCard title="DB 서버">
         <!-- 👉 Add  -->
         <VCardText class="add-products-form">
@@ -133,9 +156,9 @@ const removeDBProduct = id => {
             <ParameterDBEdit :id="index" :data="product" @remove-product="removeDBProduct" />
           </div>
 
-          <VBtn size="small" prepend-icon="mdi-plus" @click="addDBItem">
+<!--          <VBtn size="small" prepend-icon="mdi-plus" @click="addDBItem">
             Add
-          </VBtn>
+          </VBtn>-->
         </VCardText>
       </VCard>
     </VCol>
@@ -149,6 +172,7 @@ const removeDBProduct = id => {
         Reset
       </VBtn>
     </VCol>
+
   </VForm>
 
   <div class="spinner-wrap" v-if="isLoading">
