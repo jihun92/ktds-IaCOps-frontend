@@ -51,6 +51,7 @@ const parameterData = ref({
     version: '',
     type: '',
     zone: '',
+    id: ''
   }
   ],
   settingWas: [
@@ -60,6 +61,7 @@ const parameterData = ref({
     version: '',
     type: '',
     zone: '',
+    id: ''
   }
   ],
   settingDB: [
@@ -71,6 +73,7 @@ const parameterData = ref({
     zone: '',
     engine: '',
     dbversion: '',
+    id: ''
   }
   ],
 })

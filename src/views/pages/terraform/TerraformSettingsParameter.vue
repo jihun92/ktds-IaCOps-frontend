@@ -15,6 +15,10 @@ const props = defineProps({
   },
 })
 
+const webShow = ref(false);
+const wasShow = ref(false);
+const dbShow = ref(false);
+
 const TerraformStore = useTerraformStore()
 const { planResults } = storeToRefs(TerraformStore)
 
@@ -37,11 +41,12 @@ const addWebItem = () => {
 
   // eslint-disable-next-line vue/no-mutating-props
   props.data.settingWeb.push({
-    name: '',
-    os: '',
-    version: '',
+    name: 'WEB-SEVER1',
+    os: 'centOS',
+    version: '7.9',
     type: '',
     zone: '',
+    id: ''
   })
 }
 
@@ -55,6 +60,7 @@ const addWasItem = () => {
     version: '',
     type: '',
     zone: '',
+    id: ''
   })
 }
 
@@ -70,6 +76,7 @@ const addDBItem = () => {
     zone: '',
     engine: '',
     dbversion: '',
+    id: ''
   })
 }
 
@@ -87,43 +94,95 @@ const removeDBProduct = id => {
   props.data.settingDB.splice(id, 1)
 }
 
-</script>
 
-<script>
-export default {
-  methods:{
-    propertyChange(id){
-      console.log(id);
-      this.$refs.webProperty.$el.style.display = "none";
-      this.$refs.wasProperty.$el.style.display = "none";
-      this.$refs.dbProperty.$el.style.display = "none";
-      if(id.indexOf("WebServer")>-1 || id.indexOf("ec2")>-1){
-        this.$refs.webProperty.$el.style.display = "block";
-      }else if(id.indexOf("WasServer")>-1){
-        this.$refs.wasProperty.$el.style.display = "block";
-      }else if(id.indexOf("DbServer")>-1 || id.indexOf("rds")>-1 ){
-        this.$refs.dbProperty.$el.style.display = "block";
-      }
-    }
-  }
+const saveWebItem = () => {
+  sessionStorage.setItem(props.data.settingWeb[0].id, JSON.stringify(props.data.settingWeb[0]));
 }
 
+const saveWasItem = () => {
+  sessionStorage.setItem(props.data.settingWas[0].id, JSON.stringify(props.data.settingWas[0]));
+}
+
+const saveDBItem = () => {
+  sessionStorage.setItem(props.data.settingDB[0].id, JSON.stringify(props.data.settingDB[0]));
+}
+
+const sessionStorage = window.sessionStorage;
+
+const propertySelect = id => {
+  webShow.value = false;
+  wasShow.value = false;
+  dbShow.value = false;
+  removeWebProduct(0);
+  removeWasProduct(0);
+  removeDBProduct(0);
+  if(id!==undefined){
+    if(id.indexOf("WebServer") > -1 || id.indexOf("ec2") > -1){
+      if(sessionStorage.getItem(id)){
+        props.data.settingWeb.push(JSON.parse(sessionStorage.getItem(id)));
+      }else{
+        props.data.settingWeb.push({
+          name: '',
+          os: '',
+          version: '',
+          type: '',
+          zone: '',
+          id: id
+        });
+      }
+      webShow.value = true;
+    }else if(id.indexOf("WasServer")>-1){
+      if(sessionStorage.getItem(id)){
+        props.data.settingWas.push(JSON.parse(sessionStorage.getItem(id)));
+      }else{
+        props.data.settingWas.push({
+          name: '',
+          os: '',
+          version: '',
+          type: '',
+          zone: '',
+          id: id
+        })
+      }
+      wasShow.value = true;
+    }else if(id.indexOf("DbServer")>-1 || id.indexOf("rds")>-1){
+      if(sessionStorage.getItem(id)){
+        props.data.settingDB.push(JSON.parse(sessionStorage.getItem(id)));
+      }else {
+        props.data.settingDB.push({
+          name: '',
+          os: '',
+          version: '',
+          type: '',
+          zone: '',
+          engine: '',
+          dbversion: '',
+          id: id
+        })
+      }
+      dbShow.value = true;
+    }
+  }
+
+}
 </script>
 
 <template>
   <VForm @submit.prevent="" method="post">
 
-    <TerraformDiagram @child="propertyChange"></TerraformDiagram>
+    <TerraformDiagram @propertySelect="propertySelect"></TerraformDiagram>
 
     <!-- 👉 web 선택 -->
-    <VCol cols="12" v-show="false" ref="webProperty">
-      <VCard title="WEB 서버">
+    <VCol cols="12" v-show="webShow">
+      <VCard title="Property">
         <!-- 👉 Add  -->
         <VCardText class="add-products-form">
           <div v-for="(product, index) in props.data.settingWeb" class="mb-4">
             <ParameterWebEdit :id="index" :data="product" @remove-product="removeWebProduct" />
           </div>
-
+          <VBtn size="small" @click="saveWebItem">
+            SAVE
+          </VBtn>
 <!--          <VBtn size="small" prepend-icon="mdi-plus" @click="addWebItem">
             Add
           </VBtn>-->
@@ -132,14 +191,16 @@ export default {
     </VCol>
 
     <!-- 👉 was 선택 -->
-    <VCol cols="12" v-show="false" ref="wasProperty">
-      <VCard title="WAS 서버">
+    <VCol cols="12" v-show="wasShow">
+      <VCard title="Property">
         <!-- 👉 Add  -->
         <VCardText class="add-products-form">
           <div v-for="(product, index) in props.data.settingWas" class="mb-4">
             <ParameterWasEdit :id="index" :data="product" @remove-product="removeWasProduct" />
           </div>
-
+          <VBtn size="small" @click="saveWasItem">
+            SAVE
+          </VBtn>
 <!--          <VBtn size="small" prepend-icon="mdi-plus" @click="addWasItem">
             Add
           </VBtn>-->
@@ -148,14 +209,16 @@ export default {
     </VCol>
 
     <!-- 👉 db 선택 -->
-    <VCol cols="12" v-show="false" ref="dbProperty">
-      <VCard title="DB 서버">
+    <VCol cols="12" v-show="dbShow">
+      <VCard title="Property">
         <!-- 👉 Add  -->
         <VCardText class="add-products-form">
           <div v-for="(product, index) in props.data.settingDB" class="mb-4">
             <ParameterDBEdit :id="index" :data="product" @remove-product="removeDBProduct" />
           </div>
-
+          <VBtn size="small" @click="saveDBItem">
+            SAVE
+          </VBtn>
 <!--          <VBtn size="small" prepend-icon="mdi-plus" @click="addDBItem">
             Add
           </VBtn>-->

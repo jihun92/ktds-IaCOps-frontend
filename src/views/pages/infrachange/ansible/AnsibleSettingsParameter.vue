@@ -4,6 +4,7 @@ import ParameterOSEdit from './ParameterOSEdit.vue'
 import { onMounted } from 'vue';
 import { useAnsibleStore } from './useAnsibleStore'
 import { useProjectStore } from '@/views/pages/project/useProjectStore'
+import AnsibleDiagram from "./AnsibleDiagram.vue";
 const ProjectStore = useProjectStore()
 
 
@@ -231,6 +232,7 @@ const submitDry = () => {
 
 <template>
   <VForm @submit.prevent="() => { }">
+    <AnsibleDiagram></AnsibleDiagram>
     <VCol cols="12">
       <VCard title="인벤토리 선택">
         <VCardText>

@@ -4,7 +4,7 @@
       <div class="sb-mobile-palette-bar">
         <div id="palette-icon" role="button"  class="e-ddb-icons1 e-toggle-palette"></div>
       </div>
-      <div id="palette-space" class="sb-mobile-palette">
+      <div id="palette-space" v-show="false" class="sb-mobile-palette">
         <ejs-symbolpalette ref="paletteObj" id="symbolpalette" :expandMode='expandMode' :palettes='palettes' :width='palettewidth' :height='paletteheight'
                            :getNodeDefaults='palettegetNodeDefaults' :getSymbolInfo='getSymbolInfo'
                            :symbolWidth='symbolWidth' :symbolHeight='symbolHeight'>
@@ -26,21 +26,7 @@
       </div>
     </div>
   </div>
-  <VRow>
-    <VCol cols="12">
-      <VCard title="Terraform Code">
 
-        <VCardText class="scrollable-p" >
-          <div style="white-space:pre-line; height: 200px;">
-            <textarea ref="terraformCode" style='width:100%; height:100%;' readonly></textarea>
-          </div>
-<!--          <p v-for="d in tfstateResults">
-            <span>{{ d }}</span>
-          </p>-->
-        </VCardText>
-      </VCard>
-    </VCol>
-  </VRow>
 </template>
 <style scoped>
 #networkDiagram .sb-mobile-palette-bar {
@@ -170,20 +156,7 @@ import {
   template17,
   template18,
   arrow
-} from "./network-shapes-templates";
-
-import {
-  gateway,
-  vpc,
-  publicSubnet1,
-  publicSubnet2,
-  privateSubnet,
-  dbSubnet,
-  webServer1,
-  webServer2,
-  wasServer,
-  dbServer
-} from "./terraformCode"
+} from "@/views/pages/terraform//network-shapes-templates";
 
 import { isNullOrUndefined } from "@syncfusion/ej2-base";
 
@@ -215,7 +188,6 @@ let nodes = [
     offsetX: 220,
     offsetY: 50,
     shape: { type: "Native", content: template3 },
-    data: gateway,
     annotations: [{ content: "Internet gateway", offset: { x: 0.5, y: 1.1 } }],
     ports: port
   },
@@ -224,7 +196,6 @@ let nodes = [
     offsetX: 370,
     offsetY: 50,
     shape: { type: "Native", content: template5 },
-    data: vpc,
     annotations: [{ content: "VPC", offset: { x: 1.4, y: 0.5 } }],
     ports: port
   },
@@ -233,7 +204,6 @@ let nodes = [
     offsetX: 220,
     offsetY: 205,
     shape: { type: "Native", content: template7 },
-    data: publicSubnet1,
     annotations: [{ content: "Public subnet", offset: { x: 1.9, y: 0.5 } }],
     ports: port
   },
@@ -242,7 +212,6 @@ let nodes = [
     offsetX: 370,
     offsetY: 205,
     shape: { type: "Native", content: template8 },
-    data: privateSubnet,
     annotations: [{ content: "Private subnet", offset: { x: 1.9, y: 0.5 } }],
     ports: port
   },
@@ -251,7 +220,6 @@ let nodes = [
     offsetX: 510,
     offsetY: 205,
     shape: { type: "Native", content: template8 },
-    data: dbSubnet,
     annotations: [{ content: "DB subnet", offset: { x: 1.7, y: 0.5 } }],
     ports: port
   },
@@ -268,7 +236,6 @@ let nodes = [
     offsetX: 160,
     offsetY: 450,
     shape: { type: "Native", content: template1 },
-    data: webServer1,
     annotations: [{ content: "WEB-SERVER-1", offset: { x: 0.5, y: 1.3 } }],
     ports: port
   },
@@ -277,7 +244,6 @@ let nodes = [
     offsetX: 270,
     offsetY: 450,
     shape: { type: "Native", content: template1 },
-    data: webServer2,
     annotations: [{ content: "WEB-SERVER-2", offset: { x: 0.5, y: 1.3 } }],
     ports: port
   },
@@ -286,7 +252,6 @@ let nodes = [
     offsetX: 370,
     offsetY: 450,
     shape: { type: "Native", content: template1 },
-    data: wasServer,
     annotations: [{ content: "WAS-SERVER", offset: { x: 0.5, y: 1.3 } }],
     ports: port
   },
@@ -295,7 +260,6 @@ let nodes = [
     offsetX: 510,
     offsetY: 450,
     shape: { type: "Native", content: template2 },
-    data: dbServer,
     annotations: [{ content: "DB-SERVER", offset: { x: 0.5, y: 1.3 } }],
     ports: port
   }
@@ -385,13 +349,13 @@ let connectors = [
 // initializes the network symbols to the UML Shapes in the symbol palette.
 let symbols = [
   { id: "internet", shape: { type: "Native", content: template6 } },
-  { id: "gateway", shape: { type: "Native", content: template3 }, data:gateway},
-  { id: "vpc", shape: { type: "Native", content: template5 }, data:vpc },
-  { id: "publicSubnet", shape: { type: "Native", content: template7 }, data:publicSubnet1 },
-  { id: "privateSubnet", shape: { type: "Native", content: template8 }, data:privateSubnet },
+  { id: "gateway", shape: { type: "Native", content: template3 } },
+  { id: "vpc", shape: { type: "Native", content: template5 } },
+  { id: "publicSubnet", shape: { type: "Native", content: template7 } },
+  { id: "privateSubnet", shape: { type: "Native", content: template8 } },
   { id: "applicationLoadBalancer", shape: { type: "Native", content: template10 } },
-  { id: "ec2", shape: { type: "Native", content: template1 }, data:webServer1 },
-  { id: "rds", shape: { type: "Native", content: template2 }, data:dbServer }
+  { id: "ec2", shape: { type: "Native", content: template1 } },
+  { id: "rds", shape: { type: "Native", content: template2 } }
 ];
 let sourcePoint = { x: 0, y: 0 };
 let targetPoint = { x: 40, y: 40 };
@@ -533,17 +497,6 @@ export default {
           (symbol.shape).scale = "Stretch";
         }
       },
-      click: (args) => {
-        this.$emit("propertySelect", args.element.id);
-      },
-      onDrop : (args) => {
-        if(args.element.data) {
-          terraformCode += args.element.data;
-        }
-        this.$refs.terraformCode.textContent = terraformCode;
-        this.$emit("propertySelect", args.element.id);
-
-      },
       getSymbolInfo: (symbol) => {
         return { fit: true };
       },
@@ -551,7 +504,6 @@ export default {
     };
   },
   mounted: function() {
-    this.$refs.terraformCode.textContent = terraformCode;
     diagramInstance = this.$refs.diagramObj.ej2Instances;
     addEvents();
     diagramInstance.fitToPage();
@@ -622,7 +574,6 @@ function openPalette() {
     }
   }
 }
-let terraformCode = gateway+vpc+publicSubnet1+privateSubnet+dbSubnet+webServer1+webServer2+dbServer;
 </script>
 <script setup>
 </script>

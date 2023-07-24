@@ -62,7 +62,7 @@ updateList()
         <div class="pa-5 flex-grow-1">
             <VRow>
                 <VCol cols="12" md="6" sm="4">
-                    <VTextField v-model="props.data.name" type="text" label="Name" @focus="clearNameValue" />
+                    <VTextField v-model="props.data.name" type="text" label="Name" />
 
                 </VCol>
                 <VCol>
@@ -89,23 +89,3 @@ updateList()
         </div>-->
     </VCard>
 </template>
-
-<script>
-export default {
-    methods: {
-        clearNameValue() {
-            this.props.data.name = '';
-        },
-        clearImageValue() {
-            this.props.data.image = '';
-        },
-        updateNameValue() {
-            if (!this.props.data.name) {
-                this.props.data.name = this.props.data.name;
-            } else {
-                this.props.data.name = '';
-            }
-        },
-    },
-}
-</script>
