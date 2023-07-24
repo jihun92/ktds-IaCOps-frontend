@@ -42,6 +42,6 @@ Visual Studio Code (VSC)에서 SFTP(SSH File Transfer Protocol)를 사용하여 
 ## 6. 파일 탐색기 하단 done 메시지 확인 후 서버 접속하여 명령어 실행
 
 ```sh
-npm run 
+npm install 
 nohup sudo npm run preview &
 ```
