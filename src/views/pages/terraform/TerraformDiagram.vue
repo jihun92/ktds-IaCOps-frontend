@@ -145,7 +145,7 @@
 
 <script>
 import { registerLicense } from '@syncfusion/ej2-base';
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NGaF5cXmtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWXhfd3ZWQmleV0xxWks=');
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NGaF5cXmdCdkx3WmFZfV1gdVdMZVxbR3VPMyBoS35RdUVkW3pecHFVRWNbUUF1');
 
 import {
   SnapConstraints,
